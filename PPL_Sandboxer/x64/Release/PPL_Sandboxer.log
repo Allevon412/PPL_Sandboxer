@@ -1,0 +1,7 @@
+﻿  Assembling HellsGate.asm...
+  Generating code
+  Finished generating code
+  0 of 14 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  PPL_Sandboxer.vcxproj -> C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\x64\Release\PPL_Sandboxer.exe
