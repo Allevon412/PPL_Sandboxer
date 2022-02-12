@@ -1,30 +1,37 @@
 ﻿  main.c
-C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\definitions.h(25,1): warning C4005: 'PAGE_EXECUTE': macro redefinition
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\definitions.h(27,1): warning C4005: 'PAGE_EXECUTE': macro redefinition
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\winnt.h(12998): message : see previous definition of 'PAGE_EXECUTE'
-C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\definitions.h(26,1): warning C4005: 'PAGE_EXECUTE_READ': macro redefinition
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\definitions.h(28,1): warning C4005: 'PAGE_EXECUTE_READ': macro redefinition
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\winnt.h(12999): message : see previous definition of 'PAGE_EXECUTE_READ'
-C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\definitions.h(27,1): warning C4005: 'PAGE_EXECUTE_READWRITE': macro redefinition
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\definitions.h(29,1): warning C4005: 'PAGE_EXECUTE_READWRITE': macro redefinition
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\winnt.h(13000): message : see previous definition of 'PAGE_EXECUTE_READWRITE'
-C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\definitions.h(28,1): warning C4005: 'PAGE_EXECUTE_WRITECOPY': macro redefinition
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\definitions.h(30,1): warning C4005: 'PAGE_EXECUTE_WRITECOPY': macro redefinition
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\winnt.h(13001): message : see previous definition of 'PAGE_EXECUTE_WRITECOPY'
-C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\definitions.h(29,1): warning C4005: 'PAGE_NOACCESS': macro redefinition
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\definitions.h(31,1): warning C4005: 'PAGE_NOACCESS': macro redefinition
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\winnt.h(12994): message : see previous definition of 'PAGE_NOACCESS'
-C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\definitions.h(30,1): warning C4005: 'PAGE_READONLY': macro redefinition
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\definitions.h(32,1): warning C4005: 'PAGE_READONLY': macro redefinition
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\winnt.h(12995): message : see previous definition of 'PAGE_READONLY'
-C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\definitions.h(31,1): warning C4005: 'PAGE_READWRITE': macro redefinition
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\definitions.h(33,1): warning C4005: 'PAGE_READWRITE': macro redefinition
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\winnt.h(12996): message : see previous definition of 'PAGE_READWRITE'
-C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\definitions.h(32,1): warning C4005: 'PAGE_WRITECOPY': macro redefinition
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\definitions.h(34,1): warning C4005: 'PAGE_WRITECOPY': macro redefinition
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\winnt.h(12997): message : see previous definition of 'PAGE_WRITECOPY'
-C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\definitions.h(33,1): warning C4005: 'PAGE_GUARD': macro redefinition
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\definitions.h(35,1): warning C4005: 'PAGE_GUARD': macro redefinition
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\winnt.h(13002): message : see previous definition of 'PAGE_GUARD'
-C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\definitions.h(34,1): warning C4005: 'PAGE_NOCACHE': macro redefinition
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\definitions.h(36,1): warning C4005: 'PAGE_NOCACHE': macro redefinition
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\winnt.h(13003): message : see previous definition of 'PAGE_NOCACHE'
-C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\definitions.h(35,1): warning C4005: 'PAGE_WRITECOMBINE': macro redefinition
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\definitions.h(37,1): warning C4005: 'PAGE_WRITECOMBINE': macro redefinition
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\winnt.h(13004): message : see previous definition of 'PAGE_WRITECOMBINE'
-C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\main.c(32,18): warning C4098: 'PopulateVxTable': 'void' function returning a value
-C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\main.c(34,18): warning C4098: 'PopulateVxTable': 'void' function returning a value
-C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\main.c(36,18): warning C4098: 'PopulateVxTable': 'void' function returning a value
-C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\main.c(38,18): warning C4098: 'PopulateVxTable': 'void' function returning a value
-C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\main.c(157,18): warning C4047: 'return': 'PPEB' differs in levels of indirection from 'int'
-C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\main.c(198,61): warning C4267: 'function': conversion from 'size_t' to 'int', possible loss of data
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\main.c(35,18): warning C4098: 'PopulateVxTable': 'void' function returning a value
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\main.c(37,18): warning C4098: 'PopulateVxTable': 'void' function returning a value
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\main.c(39,18): warning C4098: 'PopulateVxTable': 'void' function returning a value
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\main.c(41,18): warning C4098: 'PopulateVxTable': 'void' function returning a value
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\main.c(43,18): warning C4098: 'PopulateVxTable': 'void' function returning a value
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\main.c(45,18): warning C4098: 'PopulateVxTable': 'void' function returning a value
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\main.c(155,16): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'LPCTSTR'
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\main.c(155,16): message : consider using '%ls' in the format string
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\main.c(155,16): message : consider using '%lls' in the format string
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\main.c(155,16): message : consider using '%Ls' in the format string
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\main.c(155,16): message : consider using '%ws' in the format string
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\main.c(175,18): warning C4047: 'return': 'PPEB' differs in levels of indirection from 'int'
+C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\PPL_Sandboxer\main.c(306,61): warning C4267: 'function': conversion from 'size_t' to 'int', possible loss of data
   PPL_Sandboxer.vcxproj -> C:\sektor7\PPL_Sandboxer\PPL_Sandboxer\x64\Debug\PPL_Sandboxer.exe

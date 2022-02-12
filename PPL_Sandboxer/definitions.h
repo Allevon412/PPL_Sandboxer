@@ -18,6 +18,8 @@ typedef struct _VX_TABLE {
 	VX_TABLE_ENTRY NtAdjustPrivilegesToken;
 	VX_TABLE_ENTRY NtSetInformationToken;
 	VX_TABLE_ENTRY NtOpenProcessToken;
+	VX_TABLE_ENTRY NtDuplicateToken;
+	VX_TABLE_ENTRY NtSetInformationThread;
 
 } VX_TABLE, * PVX_TABLE;
 
@@ -139,3 +141,28 @@ typedef VOID(NTAPI* RtlInitUnicodeString_t)(
 #define FILE_NO_COMPRESSION                     0x00008000
 
 #define STATUS_IMAGE_NOT_AT_BASE				0x40000003
+
+
+typedef enum _THREADINFOCLASS
+{
+	ThreadBasicInformation,
+	ThreadTimes,
+	ThreadPriority,
+	ThreadBasePriority,
+	ThreadAffinityMask,
+	ThreadImpersonationToken,
+	ThreadDescriptorTableEntry,
+	ThreadEnableAlignmentFaultFixup,
+	ThreadEventPair_Reusable,
+	ThreadQuerySetWin32StartAddress,
+	ThreadZeroTlsCell,
+	ThreadPerformanceCount,
+	ThreadAmILastThread,
+	ThreadIdealProcessor,
+	ThreadPriorityBoost,
+	ThreadSetTlsArrayAddress,
+	ThreadIsIoPending,
+	ThreadHideFromDebugger,
+	ThreadBreakOnTermination,
+	MaxThreadInfoClass
+} THREADINFOCLASS, * PTHREADINFOCLASS;

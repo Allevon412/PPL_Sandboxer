@@ -40,8 +40,8 @@ BOOL GetImageExportDirectory(PVOID pModuleBase, PIMAGE_EXPORT_DIRECTORY* ppImage
 }
 
 //function used to resolve the hash of targeted Nt Functions.
-/*
 
+/*
 void LookUpFunctionhash(PCHAR pczFunctionName, unsigned char* str) {
 	if (!strcmp(pczFunctionName, str)) {
 		DWORD64 dwHash2 = djb2(pczFunctionName);
@@ -63,7 +63,8 @@ BOOL GetVxTableEntry(PVOID pModuleBase, PIMAGE_EXPORT_DIRECTORY pImageExportDire
 		//LookUpFunctionhash(pczFunctionName, (unsigned char*) "NtAdjustPrivilegesToken");
 		//LookUpFunctionhash(pczFunctionName, (unsigned char*)"NtSetInformationToken");
 		//LookUpFunctionhash(pczFunctionName, (unsigned char*)"NtOpenProcessToken");
-		
+		//LookUpFunctionhash(pczFunctionName, (unsigned char*)"NtDuplicateToken"); 
+		//LookUpFunctionhash(pczFunctionName, (unsigned char*)"NtSetInformationThread"); 
 
 		if (djb2(pczFunctionName) == pVxTableEntry->dwHash) {
 			pVxTableEntry->pAddress = pFunctionAddress;

