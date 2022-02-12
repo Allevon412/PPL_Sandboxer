@@ -10,3 +10,7 @@ It also causes the computers CPU to go into hyperdrive, this makes me believe Bi
 Anyway, if you come across this and decide you want to take a shot at it, i keep some comments that may help and function calls in comments that i used to try differetn methods to acheive the same goal.
 
 Here is a video of the program working.
+
+
+https://user-images.githubusercontent.com/41178870/153692845-9d6ae64d-0562-43ee-909a-65db6a67e4c2.mp4
+
